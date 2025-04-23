@@ -4,11 +4,15 @@ import cors from 'cors';
 import connectDB from './configs/db.js'; // Import the database connection function
 import 'dotenv/config'; // Import dotenv to load environment variables
 import userRouter from './routes/userRoute.js'; // Import the user router
+import sellerRoute from './routes/sellerRoute.js';
+import connectCloudinary from './configs/cloudinary.js';
+import productRouter from './routes/ProductRoute.js';
 
 const app = express();
 const port = process.env.PORT || 4000; 
 
 await connectDB() // Connect to MongoDB
+await connectCloudinary() // Connect to Cloudinary
 
 
 // Allow multiple origins
@@ -28,6 +32,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/user', userRouter); // Use the user router for user-related routes
+app.use('/api/seller', sellerRoute); // Use the seller router for seller-related routes
+app.use('/api/product', productRouter)
+
 
 app .listen(port, () => {
     console.log(`Server running on port http://localhost:${port}`);
