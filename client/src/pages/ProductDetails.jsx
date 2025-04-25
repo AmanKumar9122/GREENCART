@@ -129,8 +129,9 @@ const ProductDetails = () => {
               Add to Cart
             </button>
             <button
-              onClick={() => {
-                /* implement buy now */
+              onClick={() => { 
+                navigate("/cart");
+                window.scrollTo(0, 0);
               }}
               className="flex-1 py-3 bg-primary text-white rounded hover:bg-primary-dull transition"
             >
