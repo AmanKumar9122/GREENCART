@@ -62,7 +62,7 @@ const Cart = () => {
       }
       // Place order with COD
       if(paymentOption === "COD"){
-        const { data } = await axios.post("/api/order/cod",{
+        const { data } = await axios.post("/api/orders/cod",{
           userId : user._id,
           items : cartArray.map(item => ({ 
             product : item._id,
@@ -77,6 +77,21 @@ const Cart = () => {
         }
         else{
           toast.error(data.message)
+        }
+      } else {
+        // Place order with Stripe
+        const { data } = await axios.post("/api/orders/stripe", {
+          userId: user._id,
+          items: cartArray.map(item => ({
+            product: item._id,
+            quantity: item.quantity,
+          })),
+          address: selectedAddress._id,
+        });
+        if (data.success) {
+          window.location.replace(data.url) // Redirect to Stripe Checkout
+        } else {
+          toast.error(data.message);
         }
       }
       

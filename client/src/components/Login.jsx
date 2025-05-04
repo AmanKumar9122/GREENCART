@@ -4,35 +4,45 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { setShowUserLogin, setUser, axios } = useAppContext();
-  const [state, setState] = React.useState("login");
+  const { setShowUserLogin, setUser, setIsSeller, axios } = useAppContext();
+  const [state, setState] = React.useState("login"); // login or register
+  const [loginType, setLoginType] = React.useState("user"); // user or seller
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const { navigate } = useAppContext()
+  const { navigate } = useAppContext();
 
   const onSubmitHandler = async (event) => {
+    event.preventDefault();
     try {
-      event.preventDefault();
-      const { data } = await axios.post(`/api/user/${state}`, {
-        name,
-        email,
-        password,
-      });
-  
+      let endpoint = "";
+      let payload = { email, password };
+
+      if (loginType === "user") {
+        endpoint = `/api/user/${state}`;
+        if (state === "register") payload.name = name;
+      } else {
+        endpoint = "/api/seller/login"; // seller can only login
+      }
+
+      const { data } = await axios.post(endpoint, payload);
+
       if (data.success) {
-        navigate('/');
-        setUser(data.user);
-        setShowUserLogin(false);
+        if (loginType === "user") {
+          setUser(data.user);
+          setShowUserLogin(false);
+          navigate("/");
+        } else {
+          setIsSeller(true);
+          navigate("/seller");
+        }
       } else {
         toast.error(data.message);
       }
-  
     } catch (error) {
       toast.error(error.message);
     }
   };
-  
 
   return (
     <div
@@ -46,11 +56,42 @@ const Login = () => {
         className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] rounded-lg shadow-xl border border-gray-200 bg-white"
       >
         <p className="text-2xl font-medium m-auto">
-          <span className="text-primary">User</span>{" "}
+          <span className="text-primary">
+            {loginType === "user" ? "User" : "Seller"}
+          </span>{" "}
           {state === "login" ? "Login" : "Sign Up"}
         </p>
 
-        {state === "register" && (
+        {/* Toggle Login Type */}
+        <div className="flex gap-4 self-center text-xs">
+          <button
+            type="button"
+            onClick={() => {
+              setLoginType("user");
+              setState("login");
+            }}
+            className={`${
+              loginType === "user" ? "text-primary font-bold" : ""
+            } underline`}
+          >
+            User Login / Register
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setLoginType("seller");
+              setState("login");
+            }}
+            className={`${
+              loginType === "seller" ? "text-primary font-bold" : ""
+            } underline`}
+          >
+            Seller Login
+          </button>
+        </div>
+
+        {/* Name input for register */}
+        {loginType === "user" && state === "register" && (
           <div className="w-full">
             <p>Name</p>
             <input
@@ -88,21 +129,12 @@ const Login = () => {
           />
         </div>
 
-        {state === "register" ? (
+        {/* Switch between login/register (user only) */}
+        {loginType === "user" && (
           <p>
-            Already have an account?{" "}
+            {state === "register" ? "Already have an account?" : "Create an account?"}{" "}
             <span
-              onClick={() => setState("login")}
-              className="text-primary cursor-pointer"
-            >
-              Click here
-            </span>
-          </p>
-        ) : (
-          <p>
-            Create an account?{" "}
-            <span
-              onClick={() => setState("register")}
+              onClick={() => setState(state === "login" ? "register" : "login")}
               className="text-primary cursor-pointer"
             >
               Click here

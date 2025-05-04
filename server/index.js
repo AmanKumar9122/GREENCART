@@ -40,7 +40,6 @@ app.use('/api/product', productRouter); // Use the product router for product-re
 app.use('/api/cart', cartRouter); // Use the cart router for cart-related routes
 app.use('/api/address', addressRouter) // Use the address router for address-related routes
 app.use('/api/orders', orderRouter) // Use the order router for order-related routes
-app.use("/api/address", addressRouter) // Use the address router for address-related routes
 
 app .listen(port, () => {
     console.log(`Server running on port http://localhost:${port}`);

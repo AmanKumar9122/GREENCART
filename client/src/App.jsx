@@ -17,6 +17,8 @@ import ProductList from './pages/seller/ProductList';
 import Orders from './pages/seller/Orders';
 import AddAddress from './pages/AddAddress';
 import MyOrders from './pages/MyOrders';
+import Contact from './pages/Contact';
+import Loading from './pages/Loading';
 
 const App = () => {
   const isSellerPath = useLocation().pathname.includes('seller');
@@ -38,6 +40,10 @@ const App = () => {
           <Route path="/add-address" element={<AddAddress />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/my-orders" element={<MyOrders />} />
+          <Route path="/loader" element={<Loading />} />
+          <Route path="/contact" element={<Contact />} />
+
+          {/* Seller Routes */}
           
           <Route path="/seller" element={isSeller ? <SellerLayout /> : <SellerLogin />}>
             <Route path="add-product" element={isSeller ? <AddProduct /> : null} />
