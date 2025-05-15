@@ -18,8 +18,9 @@ await connectDB() // Connect to MongoDB
 await connectCloudinary() // Connect to Cloudinary
 
 
-// Allow multiple origins
-const allowedOrigins = ['http://localhost:5173'] 
+// Allow multiple origins 
+const allowedOrigins = [process.env.Frontend_URL]; 
+// const allowedOrigins = ['http://localhost:5173'] 
 
 //Middleware configuration
 app.use(express.json());

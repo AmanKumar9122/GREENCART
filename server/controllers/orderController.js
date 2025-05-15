@@ -2,11 +2,12 @@ import Order from "../models/Order.js"
 import Product from "../models/Product.js"
 import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+import { transporter } from "../utils/sendMail.js";
 
 // Place Order COD : /api/orders/cod
 export const placeOrderCOD = async (req, res) => {
     try {
-        const { userId, items, address } = req.body;
+        const { userId, email, items, address } = req.body;
 
         // Validation check
         if (!address || items.length === 0) {
@@ -37,6 +38,13 @@ export const placeOrderCOD = async (req, res) => {
             isPaid: true, // Assuming COD orders are marked as paid
         });
 
+        //Send confirmation email (optional)
+        await transporter.sendMail({
+            to: email,
+            subject: "Order Confirmation",
+            text: `Your order has been placed successfully. Order ID: ${userId}`,
+        });
+        
         return res.json({ success: true, message: "Order Placed Successfully" });
     } catch (error) {
         return res.json({ success: false, message: error.message });
